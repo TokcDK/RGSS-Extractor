@@ -3,7 +3,7 @@ using System.IO;
 
 namespace RGSS_Extractor
 {
-	internal class RGSSAD_Parser : Parser
+    public class RGSSAD_Parser : Parser
 	{
 		public RGSSAD_Parser(BinaryReader file) : base(file)
 		{

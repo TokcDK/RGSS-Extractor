@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RGSS_Extractor
 {
-	public class Main_Parser
+	public class Main_Parser : IDisposable
 	{
 		private Parser parser;
 
@@ -38,7 +38,8 @@ namespace RGSS_Extractor
 				return null;
 			}
 			this.parser.parse_file();
-			return this.parser.entries;
+
+            return parser.entries;
 		}
 
 		public byte[] get_filedata(Entry e)
@@ -64,5 +65,10 @@ namespace RGSS_Extractor
 		{
 			this.parser.close_file();
 		}
-	}
+
+        public void Dispose()
+        {
+            close_file();
+        }
+    }
 }

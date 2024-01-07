@@ -6,7 +6,7 @@ using System.Text;
 
 namespace RGSS_Extractor
 {
-	internal abstract class Parser
+    public abstract class Parser : IDisposable
 	{
 		protected BinaryReader inFile;
 
@@ -87,5 +87,10 @@ namespace RGSS_Extractor
 		}
 
 		public abstract void parse_file();
-	}
+
+        public void Dispose()
+        {
+			close_file();
+        }
+    }
 }
