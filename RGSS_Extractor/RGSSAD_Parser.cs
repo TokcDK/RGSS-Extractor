@@ -19,7 +19,7 @@ namespace RGSS_Extractor
 				expr_18_cp_0[expr_18_cp_1] ^= (byte)this.magickey;
 				this.magickey = this.magickey * 7 + 3;
 			}
-			return base.get_string(array);
+			return base.GetString(array);
 		}
 
 		public void parse_table()
@@ -36,15 +36,15 @@ namespace RGSS_Extractor
 				long position = this.inFile.BaseStream.Position;
 				this.inFile.BaseStream.Seek(num2, SeekOrigin.Current);
 				Entry entry = new Entry();
-				entry.name = name;
-				entry.offset = position;
-				entry.size = num2;
-				entry.datakey = this.magickey;
+				entry.Name = name;
+				entry.Offset = position;
+				entry.Size = num2;
+				entry.Datakey = this.magickey;
 				this.entries.Add(entry);
 			}
 		}
 
-		public override void parse_file()
+		public override void ParseFile()
 		{
 			uint magickey = 3735931646u;
 			this.magickey = (int)magickey;

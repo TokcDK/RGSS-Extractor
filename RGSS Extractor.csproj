@@ -49,7 +49,7 @@
     <Compile Include="RGSS_Extractor\Main_Parser.cs" />
     <Compile Include="RGSS_Extractor\Parser.cs" />
     <Compile Include="RGSS_Extractor\Program.cs" />
-    <Compile Include="RGSS_Extractor\RGSS3A_Parser.cs" />
+    <Compile Include="RGSS_Extractor\RGSS3AParser.cs" />
     <Compile Include="RGSS_Extractor\RGSSAD_Parser.cs" />
     <Compile Include="RGSS_Extractor\WinFileIO.cs" />
   </ItemGroup>

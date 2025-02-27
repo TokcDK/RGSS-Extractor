@@ -23,7 +23,7 @@ namespace RGSS_Extractor
 			this.inFile = file;
 		}
 
-		public string get_string(byte[] bytes)
+		public string GetString(byte[] bytes)
 		{
 			return Encoding.UTF8.GetString(bytes);
 		}
@@ -37,7 +37,7 @@ namespace RGSS_Extractor
 			this.outFile = new BinaryWriter(File.OpenWrite(path3));
 		}
 
-		public byte[] read_data(long offset, long size, int datakey)
+		public byte[] ReadData(long offset, long size, int datakey)
 		{
 			this.inFile.BaseStream.Seek(offset, SeekOrigin.Begin);
 			this.data = this.inFile.ReadBytes((int)size);
@@ -64,33 +64,33 @@ namespace RGSS_Extractor
 			return this.data;
 		}
 
-		public void write_file(Entry e)
+		public void WriteFile(Entry e)
 		{
-			this.create_file(e.name);
-			this.data = this.read_data(e.offset, e.size, e.datakey);
+			this.create_file(e.Name);
+			this.data = this.ReadData(e.Offset, e.Size, e.Datakey);
 			this.outFile.Write(this.data);
 			this.outFile.Close();
-			Console.WriteLine("{0} wrote out successfully", e.name);
+			Console.WriteLine("{0} wrote out successfully", e.Name);
 		}
 
 		public void write_entries()
 		{
 			for (int i = 0; i < this.entries.Count; i++)
 			{
-				this.write_file(this.entries[i]);
+				this.WriteFile(this.entries[i]);
 			}
 		}
 
-		public void close_file()
+		public void CloseFile()
 		{
 			this.inFile.Close();
 		}
 
-		public abstract void parse_file();
+		public abstract void ParseFile();
 
         public void Dispose()
         {
-			close_file();
+			CloseFile();
         }
     }
 }

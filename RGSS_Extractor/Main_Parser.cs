@@ -9,7 +9,7 @@ namespace RGSS_Extractor
 	{
 		private Parser parser;
 
-		private Parser get_parser(int version, BinaryReader inFile)
+		private Parser GetParser(int version, BinaryReader inFile)
 		{
 			if (version == 1)
 			{
@@ -17,12 +17,12 @@ namespace RGSS_Extractor
 			}
 			if (version == 3)
 			{
-				return new RGSS3A_Parser(inFile);
+				return new RGSS3AParser(inFile);
 			}
 			return null;
 		}
 
-		public List<Entry> parse_file(string path)
+		public List<Entry> ParseFile(string path)
 		{
 			BinaryReader binaryReader = new BinaryReader(File.OpenRead(path));
 			string @string = Encoding.UTF8.GetString(binaryReader.ReadBytes(6));
@@ -32,27 +32,27 @@ namespace RGSS_Extractor
 			}
 			binaryReader.ReadByte();
 			int version = (int)binaryReader.ReadByte();
-			this.parser = this.get_parser(version, binaryReader);
+			this.parser = this.GetParser(version, binaryReader);
 			if (this.parser == null)
 			{
 				return null;
 			}
-			this.parser.parse_file();
+			this.parser.ParseFile();
 
             return parser.entries;
 		}
 
-		public byte[] get_filedata(Entry e)
+		public byte[] GetFiledata(Entry e)
 		{
-			return this.parser.read_data(e.offset, e.size, e.datakey);
+			return this.parser.ReadData(e.Offset, e.Size, e.Datakey);
 		}
 
-		public void export_file(Entry e)
+		public void ExportFile(Entry e)
 		{
-			this.parser.write_file(e);
+			this.parser.WriteFile(e);
 		}
 
-		public void export_archive()
+		public void ExportArchive()
 		{
 			if (this.parser == null)
 			{
@@ -61,14 +61,14 @@ namespace RGSS_Extractor
 			this.parser.write_entries();
 		}
 
-		public void close_file()
+		public void CloseFile()
 		{
-			this.parser.close_file();
+			this.parser.CloseFile();
 		}
 
         public void Dispose()
         {
-            close_file();
+            CloseFile();
         }
     }
 }

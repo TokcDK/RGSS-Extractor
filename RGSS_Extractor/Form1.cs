@@ -9,7 +9,7 @@ namespace RGSS_Extractor
 {
 	public class Form1 : Form
 	{
-		private Main_Parser parser = new Main_Parser();
+		private readonly Main_Parser parser = new Main_Parser();
 
 		private List<Entry> entries = new List<Entry>();
 
@@ -73,7 +73,7 @@ namespace RGSS_Extractor
 				return;
 			}
 			this.close_archive();
-			this.entries = this.parser.parse_file(path);
+			this.entries = this.parser.ParseFile(path);
 			if (this.entries != null)
 			{
 				this.build_file_list(this.entries);
@@ -87,7 +87,7 @@ namespace RGSS_Extractor
 			{
 				return;
 			}
-			this.parser.export_archive();
+			this.parser.ExportArchive();
 		}
 
 		private void close_archive()
@@ -96,7 +96,7 @@ namespace RGSS_Extractor
 			{
 				this.explorer_view.Nodes.Clear();
 				this.pic_preview.Image = null;
-				this.parser.close_file();
+				this.parser.CloseFile();
 			}
 		}
 
@@ -105,7 +105,7 @@ namespace RGSS_Extractor
 			for (int i = 0; i < entries.Count; i++)
 			{
 				Entry entry = entries[i];
-				string[] array = entry.name.Split(new char[]
+				string[] array = entry.Name.Split(new char[]
 				{
 					Path.DirectorySeparatorChar
 				});
@@ -143,7 +143,7 @@ namespace RGSS_Extractor
 
 		private void show_image(Entry entry)
 		{
-			byte[] buffer = this.parser.get_filedata(entry);
+			byte[] buffer = this.parser.GetFiledata(entry);
 			MemoryStream stream = new MemoryStream(buffer);
 			Image image = Image.FromStream(stream);
 			this.pic_preview.Image = image;
@@ -151,7 +151,7 @@ namespace RGSS_Extractor
 
 		private void determine_action(Entry entry)
 		{
-			if (entry.name.EndsWith(".png"))
+			if (entry.Name.EndsWith(".png"))
 			{
 				this.show_image(entry);
 			}
@@ -172,7 +172,7 @@ namespace RGSS_Extractor
 			if (node.Tag != null)
 			{
 				Entry e = (Entry)node.Tag;
-				this.parser.export_file(e);
+				this.parser.ExportFile(e);
 			}
 			foreach (TreeNode treeNode in node.Nodes)
 			{
@@ -180,7 +180,7 @@ namespace RGSS_Extractor
 				if (treeNode.Tag != null)
 				{
 					Entry e = (Entry)treeNode.Tag;
-					this.parser.export_file(e);
+					this.parser.ExportFile(e);
 				}
 			}
 		}

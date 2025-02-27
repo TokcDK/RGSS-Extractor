@@ -40,8 +40,8 @@ namespace RGSS_Extractor
 					Program.AllocConsole();
 				}
 				Main_Parser main_Parser = new Main_Parser();
-				main_Parser.parse_file(args[0]);
-				main_Parser.export_archive();
+				main_Parser.ParseFile(args[0]);
+				main_Parser.ExportArchive();
 				Program.FreeConsole();
 				return;
 			}
