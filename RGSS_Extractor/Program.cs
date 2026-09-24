@@ -1,3 +1,4 @@
+using RGSS_Extractor.Core;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;

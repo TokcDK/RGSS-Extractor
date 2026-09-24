@@ -1,3 +1,4 @@
+using RGSS_Extractor.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace RGSS_Extractor
+namespace RGSS_Extractor.Core
 {
 	public class Main_Parser : IDisposable
 	{
@@ -43,35 +43,35 @@ namespace RGSS_Extractor
 				return null;
 			}
 			binaryReader.ReadByte();
-			int version = (int)binaryReader.ReadByte();
-			this.parser = this.GetParser(version, binaryReader);
-			if (this.parser == null)
+			int version = binaryReader.ReadByte();
+            parser = GetParser(version, binaryReader);
+			if (parser == null)
 			{
 				binaryReader.Dispose();
 				return null;
 			}
-			this.parser.ParseFile();
+            parser.ParseFile();
 
             return parser.entries;
 		}
 
 		public byte[] GetFiledata(Entry e)
 		{
-			return this.parser.ReadData(e.Offset, e.Size, e.Datakey);
+			return parser.ReadData(e.Offset, e.Size, e.Datakey);
 		}
 
 		public void ExportFile(Entry e)
 		{
-			this.parser.WriteFile(e);
+            parser.WriteFile(e);
 		}
 
 		public void ExportArchive()
 		{
-			if (this.parser == null)
+			if (parser == null)
 			{
 				return;
 			}
-			this.parser.write_entries();
+            parser.write_entries();
 		}
 
 		/// <summary>
@@ -84,13 +84,13 @@ namespace RGSS_Extractor
 		/// </remarks>
 		public void CloseFile()
 		{
-			if (this.parser == null)
+			if (parser == null)
 			{
 				return;
 			}
 
-			this.parser.CloseFile();
-			this.parser = null;
+            parser.CloseFile();
+            parser = null;
 		}
 
         public void Dispose()

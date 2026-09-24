@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace RGSS_Extractor
+namespace RGSS_Extractor.Core
 {
     public abstract class Parser : IDisposable
 	{
@@ -20,7 +20,7 @@ namespace RGSS_Extractor
 
 		public Parser(BinaryReader file)
 		{
-			this.inFile = file;
+            inFile = file;
 		}
 
 		public string GetString(byte[] bytes)
@@ -42,7 +42,7 @@ namespace RGSS_Extractor
 			string path2 = Path.Combine(directoryName, Path.GetDirectoryName(path));
 			string path3 = Path.Combine(directoryName, path);
 			Directory.CreateDirectory(path2);
-			this.outFile = new BinaryWriter(File.Create(path3));
+            outFile = new BinaryWriter(File.Create(path3));
 		}
 
 		/// <summary>
@@ -66,19 +66,19 @@ namespace RGSS_Extractor
 				return new byte[0];
 			}
 
-			this.inFile.BaseStream.Seek(offset, SeekOrigin.Begin);
-			this.data = this.inFile.ReadBytes((int)size);
+            inFile.BaseStream.Seek(offset, SeekOrigin.Begin);
+            data = inFile.ReadBytes((int)size);
 
 			// A truncated archive reads short instead of throwing, and the loops below walk the
 			// length they were promised rather than the length they got.
-			int length = this.data.Length;
+			int length = data.Length;
 			int num = length / 4;
 			int i;
 			for (i = 0; i < num; i++)
 			{
 				for (int j = 0; j < 4; j++)
 				{
-					byte[] expr_43_cp_0 = this.data;
+					byte[] expr_43_cp_0 = data;
 					int expr_43_cp_1 = i * 4 + j;
 					expr_43_cp_0[expr_43_cp_1] ^= (byte)(datakey >> 8 * j);
 				}
@@ -87,39 +87,39 @@ namespace RGSS_Extractor
 			int num2 = i * 4;
 			while (num2 < length)
 			{
-				byte[] expr_82_cp_0 = this.data;
+				byte[] expr_82_cp_0 = data;
 				int expr_82_cp_1 = num2;
 				expr_82_cp_0[expr_82_cp_1] ^= (byte)(datakey >> 8 * (num2 - i * 4));
 				num2++;
 			}
-			return this.data;
+			return data;
 		}
 
 		public void WriteFile(Entry e)
 		{
-			this.create_file(e.Name);
-			this.data = this.ReadData(e.Offset, e.Size, e.Datakey);
-			this.outFile.Write(this.data);
-			this.outFile.Close();
+            create_file(e.Name);
+            data = ReadData(e.Offset, e.Size, e.Datakey);
+            outFile.Write(data);
+            outFile.Close();
 			Console.WriteLine("{0} wrote out successfully", e.Name);
 		}
 
 		public void write_entries()
 		{
-			for (int i = 0; i < this.entries.Count; i++)
+			for (int i = 0; i < entries.Count; i++)
 			{
-				this.WriteFile(this.entries[i]);
+                WriteFile(entries[i]);
 			}
 		}
 
 		public void CloseFile()
 		{
-			if (this.inFile == null)
+			if (inFile == null)
 			{
 				return;
 			}
 
-			this.inFile.Close();
+            inFile.Close();
 		}
 
 		public abstract void ParseFile();

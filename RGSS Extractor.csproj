@@ -43,22 +43,22 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RGSS_Extractor.Properties\Resources.cs" />
     <Compile Include="RGSS_Extractor.Properties\Settings.cs" />
-    <Compile Include="RGSS_Extractor\Entry.cs" />
     <Compile Include="RGSS_Extractor\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RGSS_Extractor\Main_Parser.cs" />
-    <Compile Include="RGSS_Extractor\Parser.cs" />
     <Compile Include="RGSS_Extractor\Program.cs" />
-    <Compile Include="RGSS_Extractor\RGSS3AParser.cs" />
-    <Compile Include="RGSS_Extractor\RGSSAD_Parser.cs" />
-    <Compile Include="RGSS_Extractor\WinFileIO.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="RGSS_Extractor\Form1.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="RGSS-Extractor.Core\RGSS-Extractor.Core.csproj">
+      <Project>{56da8437-aedd-41c5-918c-cfc91e1436ea}</Project>
+      <Name>RGSS-Extractor.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

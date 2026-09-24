@@ -1,6 +1,6 @@
 using System;
 
-namespace RGSS_Extractor
+namespace RGSS_Extractor.Core
 {
 	public class Entry
 	{

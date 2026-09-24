@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace RGSS_Extractor
+namespace RGSS_Extractor.Core
 {
 	public class WinFileIO : IDisposable
 	{
@@ -36,52 +36,52 @@ namespace RGSS_Extractor
 
 		public WinFileIO()
 		{
-			this.pHandle = IntPtr.Zero;
+			pHandle = IntPtr.Zero;
 		}
 
 		public WinFileIO(Array Buffer)
 		{
-			this.PinBuffer(Buffer);
-			this.pHandle = IntPtr.Zero;
+			PinBuffer(Buffer);
+			pHandle = IntPtr.Zero;
 		}
 
 		protected void Dispose(bool disposing)
 		{
-			this.Close();
-			this.UnpinBuffer();
+			Close();
+			UnpinBuffer();
 		}
 
 		public void Dispose()
 		{
-			this.Dispose(true);
+			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
 		~WinFileIO()
 		{
-			this.Dispose(false);
+			Dispose(false);
 		}
 
 		unsafe public void PinBuffer(Array Buffer)
 		{
-			this.UnpinBuffer();
-			this.gchBuf = GCHandle.Alloc(Buffer, GCHandleType.Pinned);
-			this.pBuffer = Marshal.UnsafeAddrOfPinnedArrayElement(Buffer, 0).ToPointer();
+			UnpinBuffer();
+			gchBuf = GCHandle.Alloc(Buffer, GCHandleType.Pinned);
+			pBuffer = Marshal.UnsafeAddrOfPinnedArrayElement(Buffer, 0).ToPointer();
 		}
 
 		public void UnpinBuffer()
 		{
-			if (this.gchBuf.IsAllocated)
+			if (gchBuf.IsAllocated)
 			{
-				this.gchBuf.Free();
+				gchBuf.Free();
 			}
 		}
 
 		public void OpenForReading(string FileName)
 		{
-			this.Close();
-			this.pHandle = WinFileIO.CreateFile(FileName, 2147483648u, 0u, 0u, 3u, 0u, 0);
-			if (this.pHandle == IntPtr.Zero)
+			Close();
+			pHandle = CreateFile(FileName, 2147483648u, 0u, 0u, 3u, 0u, 0);
+			if (pHandle == IntPtr.Zero)
 			{
 				Win32Exception ex = new Win32Exception();
 				ApplicationException ex2 = new ApplicationException("WinFileIO:OpenForReading - Could not open file " + FileName + " - " + ex.Message);
@@ -91,9 +91,9 @@ namespace RGSS_Extractor
 
 		public void OpenForWriting(string FileName)
 		{
-			this.Close();
-			this.pHandle = WinFileIO.CreateFile(FileName, 1073741824u, 0u, 0u, 2u, 0u, 0);
-			if (this.pHandle == IntPtr.Zero)
+			Close();
+			pHandle = CreateFile(FileName, 1073741824u, 0u, 0u, 2u, 0u, 0);
+			if (pHandle == IntPtr.Zero)
 			{
 				Win32Exception ex = new Win32Exception();
 				ApplicationException ex2 = new ApplicationException("WinFileIO:OpenForWriting - Could not open file " + FileName + " - " + ex.Message);
@@ -104,7 +104,7 @@ namespace RGSS_Extractor
 		public unsafe int Read(int BytesToRead)
 		{
 			int result = 0;
-			if (!WinFileIO.ReadFile(this.pHandle, this.pBuffer, BytesToRead, &result, 0))
+			if (!ReadFile(pHandle, pBuffer, BytesToRead, &result, 0))
 			{
 				Win32Exception ex = new Win32Exception();
 				ApplicationException ex2 = new ApplicationException("WinFileIO:Read - Error occurred reading a file. - " + ex.Message);
@@ -117,8 +117,8 @@ namespace RGSS_Extractor
 		{
 			int num = 0;
 			int num2 = 0;
-			byte* ptr = (byte*)this.pBuffer;
-			while (WinFileIO.ReadFile(this.pHandle, (void*)ptr, 65536, &num, 0))
+			byte* ptr = (byte*)pBuffer;
+			while (ReadFile(pHandle, ptr, 65536, &num, 0))
 			{
 				if (num == 0)
 				{
@@ -136,11 +136,11 @@ namespace RGSS_Extractor
 		{
 			int num = 0;
 			int num2 = 0;
-			byte* ptr = (byte*)this.pBuffer;
+			byte* ptr = (byte*)pBuffer;
 			while (true)
 			{
 				int numberOfBytesToRead = Math.Min(65536, BytesToRead - num2);
-				if (!WinFileIO.ReadFile(this.pHandle, (void*)ptr, numberOfBytesToRead, &num, 0))
+				if (!ReadFile(pHandle, ptr, numberOfBytesToRead, &num, 0))
 				{
 					break;
 				}
@@ -163,7 +163,7 @@ namespace RGSS_Extractor
 		public unsafe int Write(int BytesToWrite)
 		{
 			int result;
-			if (!WinFileIO.WriteFile(this.pHandle, this.pBuffer, BytesToWrite, &result, 0))
+			if (!WriteFile(pHandle, pBuffer, BytesToWrite, &result, 0))
 			{
 				Win32Exception ex = new Win32Exception();
 				ApplicationException ex2 = new ApplicationException("WinFileIO:Write - Error occurred writing a file. - " + ex.Message);
@@ -176,12 +176,12 @@ namespace RGSS_Extractor
 		{
 			int num = 0;
 			int num2 = 0;
-			byte* ptr = (byte*)this.pBuffer;
+			byte* ptr = (byte*)pBuffer;
 			int num3 = NumBytesToWrite;
 			while (true)
 			{
 				int num4 = Math.Min(num3, 65536);
-				if (!WinFileIO.WriteFile(this.pHandle, (void*)ptr, num4, &num, 0))
+				if (!WriteFile(pHandle, ptr, num4, &num, 0))
 				{
 					break;
 				}
@@ -201,10 +201,10 @@ namespace RGSS_Extractor
 		public bool Close()
 		{
 			bool result = true;
-			if (this.pHandle != IntPtr.Zero)
+			if (pHandle != IntPtr.Zero)
 			{
-				result = WinFileIO.CloseHandle(this.pHandle);
-				this.pHandle = IntPtr.Zero;
+				result = CloseHandle(pHandle);
+				pHandle = IntPtr.Zero;
 			}
 			return result;
 		}

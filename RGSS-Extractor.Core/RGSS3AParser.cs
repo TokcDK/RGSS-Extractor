@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace RGSS_Extractor
+namespace RGSS_Extractor.Core
 {
     public class RGSS3AParser : Parser
 	{
@@ -24,14 +24,14 @@ namespace RGSS_Extractor
 				return string.Empty;
 			}
 
-			byte[] array = this.inFile.ReadBytes(len);
+			byte[] array = inFile.ReadBytes(len);
 			for (int i = 0; i < array.Length; i++)
 			{
 				byte[] expr_18_cp_0 = array;
 				int expr_18_cp_1 = i;
-				expr_18_cp_0[expr_18_cp_1] ^= (byte)(this.magickey >> 8 * (i % 4));
+				expr_18_cp_0[expr_18_cp_1] ^= (byte)(magickey >> 8 * (i % 4));
 			}
-			return base.GetString(array);
+			return GetString(array);
 		}
 
 		/// <summary>
@@ -44,11 +44,11 @@ namespace RGSS_Extractor
 		/// </remarks>
 		public void ParseTable()
 		{
-			Stream stream = this.inFile.BaseStream;
+			Stream stream = inFile.BaseStream;
 			while (stream.Position + 4 <= stream.Length)
 			{
-				long num = (long)this.inFile.ReadInt32();
-				num ^= (long)this.magickey;
+				long num = inFile.ReadInt32();
+				num ^= magickey;
 				if (num == 0L)
 				{
 					break;
@@ -57,13 +57,13 @@ namespace RGSS_Extractor
 				{
 					break;
 				}
-				long num2 = (long)this.inFile.ReadInt32();
-				int num3 = this.inFile.ReadInt32();
-				int num4 = this.inFile.ReadInt32();
-				num2 ^= (long)this.magickey;
-				num3 ^= this.magickey;
-				num4 ^= this.magickey;
-				string name = this.ReadFilename(num4);
+				long num2 = inFile.ReadInt32();
+				int num3 = inFile.ReadInt32();
+				int num4 = inFile.ReadInt32();
+				num2 ^= magickey;
+				num3 ^= magickey;
+				num4 ^= magickey;
+				string name = ReadFilename(num4);
                 Entry entry = new Entry
                 {
                     Offset = num,
@@ -71,14 +71,14 @@ namespace RGSS_Extractor
                     Size = num2,
                     Datakey = num3
                 };
-                this.entries.Add(entry);
+                entries.Add(entry);
 			}
 		}
 
 		public override void ParseFile()
 		{
-			this.magickey = this.inFile.ReadInt32() * 9 + 3;
-			this.ParseTable();
+            magickey = inFile.ReadInt32() * 9 + 3;
+            ParseTable();
 		}
 	}
 }
