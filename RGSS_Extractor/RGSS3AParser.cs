@@ -9,10 +9,23 @@ namespace RGSS_Extractor
 		{
 		}
 
+		/// <summary>
+		/// Reads a name of <paramref name="len"/> bytes and decrypts it with the archive's key.
+		/// </summary>
+		/// <remarks>
+		/// The length comes out of the archive, so it is checked. A corrupt or truncated table can name
+		/// a length far past the end of the file, and ReadBytes then returns fewer bytes than were
+		/// asked for - which the loop used to index straight past the end of.
+		/// </remarks>
 		public string ReadFilename(int len)
 		{
+			if (len <= 0)
+			{
+				return string.Empty;
+			}
+
 			byte[] array = this.inFile.ReadBytes(len);
-			for (int i = 0; i < len; i++)
+			for (int i = 0; i < array.Length; i++)
 			{
 				byte[] expr_18_cp_0 = array;
 				int expr_18_cp_1 = i;
@@ -21,13 +34,26 @@ namespace RGSS_Extractor
 			return base.GetString(array);
 		}
 
+		/// <summary>
+		/// Reads the entry table. Stops at the zero offset that terminates it.
+		/// </summary>
+		/// <remarks>
+		/// The loop also stops at the end of the stream. It used to rely on the terminator alone, so an
+		/// archive whose table was cut short - or whose terminator was missing - read past the end
+		/// instead of stopping, and every entry after the damage was built from whatever followed.
+		/// </remarks>
 		public void ParseTable()
 		{
-			while (true)
+			Stream stream = this.inFile.BaseStream;
+			while (stream.Position + 4 <= stream.Length)
 			{
 				long num = (long)this.inFile.ReadInt32();
 				num ^= (long)this.magickey;
 				if (num == 0L)
+				{
+					break;
+				}
+				if (stream.Position + 12 > stream.Length)
 				{
 					break;
 				}

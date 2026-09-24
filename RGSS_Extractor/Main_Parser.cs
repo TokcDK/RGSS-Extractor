@@ -22,12 +22,24 @@ namespace RGSS_Extractor
 			return null;
 		}
 
+		/// <summary>
+		/// Reads the archive's entry table.
+		/// </summary>
+		/// <remarks>
+		/// Returns null - rather than throwing - when the file is not an RGSSAD archive or its version
+		/// is unknown. The reader is disposed on those paths: it owns an open FileStream, and leaving
+		/// it behind held the archive open for the rest of the process, which on Windows also blocks
+		/// writing it back.
+		/// </remarks>
+		/// <param name="path">The archive to read.</param>
+		/// <returns>The entries, or null when the file is not a supported archive.</returns>
 		public List<Entry> ParseFile(string path)
 		{
 			BinaryReader binaryReader = new BinaryReader(File.OpenRead(path));
 			string @string = Encoding.UTF8.GetString(binaryReader.ReadBytes(6));
 			if (@string != "RGSSAD")
 			{
+				binaryReader.Dispose();
 				return null;
 			}
 			binaryReader.ReadByte();
@@ -35,6 +47,7 @@ namespace RGSS_Extractor
 			this.parser = this.GetParser(version, binaryReader);
 			if (this.parser == null)
 			{
+				binaryReader.Dispose();
 				return null;
 			}
 			this.parser.ParseFile();
@@ -61,9 +74,23 @@ namespace RGSS_Extractor
 			this.parser.write_entries();
 		}
 
+		/// <summary>
+		/// Closes the archive. Safe to call after a <see cref="ParseFile"/> that returned null.
+		/// </summary>
+		/// <remarks>
+		/// The inner parser is left null on every path that returned null above, and it used to be
+		/// dereferenced here - so disposing an archive that was not one threw NullReferenceException
+		/// from Dispose instead of reporting "not an archive".
+		/// </remarks>
 		public void CloseFile()
 		{
+			if (this.parser == null)
+			{
+				return;
+			}
+
 			this.parser.CloseFile();
+			this.parser = null;
 		}
 
         public void Dispose()
